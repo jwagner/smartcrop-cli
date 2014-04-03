@@ -1,4 +1,4 @@
-# Commmandline interface for smartcrop.js
+# Commmand line interface for smartcrop.js
 
 **WARNING: This is a work in progress. Neither the API nor the algorithm are finished.
 (Automated) verification, testing and benchmarking are yet to be done.**
