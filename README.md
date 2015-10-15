@@ -8,6 +8,9 @@ Image: [https://www.flickr.com/photos/endogamia/5682480447/](https://www.flickr.
 
 You can learn more about smartcrop.js on the [library homepage](https://github.com/jwagner/smartcrop.js)
 
+## Dependencies
+Smartcrop-cli requires [node-canvas](https://github.com/Automattic/node-canvas) which requires local libraries to be installed. Please refer to the [node-canvas wiki](https://github.com/Automattic/node-canvas/wiki/_pages) for platform specific installation instructions.
+
 ## Installation
 You can install smartcrop-cli using npm
 ```
