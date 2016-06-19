@@ -14,7 +14,6 @@
     "url": "https://github.com/jwagner/smartcrop-cli.git"
   },
   "dependencies": {
-    "canvas": "~1.3.*",
     "concat-stream": "^1.5.1",
     "gm": "^1.22.0",
     "smartcrop-gm": "~1.0.0",
