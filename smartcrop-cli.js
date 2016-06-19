@@ -31,10 +31,12 @@ var argv = require('yargs')
     .example('$0 --width 100 --height 100 photo.jpg square-thumbnail.jpg', 'generate a 100x100 thumbnail from photo.jpg')
     .config('config')
     .defaults('quality', 90)
+    .defaults('outputFormat', 'jpg')
     .describe({
         config: 'path to a config.json',
         width: 'width of the crop',
         height: 'height of the crop',
+        outputFormat: 'image magick output format string',
         quality: 'jpeg quality of the output image',
         '*': 'forwarded as options to smartcrop.js'
     })
@@ -44,25 +46,59 @@ var argv = require('yargs')
     input = argv._[0],
     output = argv._[1];
 
+var concat = require('concat-stream');
 var fs = require('fs'),
-    Canvas = require('canvas'),
-    SmartCrop = require('smartcrop'),
+    gm = require('gm').subClass({ imageMagick: true }),
+    smartcrop = require('smartcrop-gm'),
     _ = require('underscore');
 
-var img = new Canvas.Image(),
-    options = _.extend({canvasFactory: function(w, h){ return new Canvas(w, h); }}, argv.config, _.omit(argv, 'config', 'quality'));
+var options = _.extend(
+        {},
+        argv.config,
+        _.omit(argv, 'config', 'quality')
+    );
 
-img.src = fs.readFileSync(input);
-SmartCrop.crop(img, options, function(result){
-    console.log(JSON.stringify(result, null, '  '));
-    if(output && options.width && options.height){
-        var canvas = new Canvas(options.width, options.height),
-            ctx = canvas.getContext('2d'),
-            crop = result.topCrop,
-            f = fs.createWriteStream(output);
-        ctx.patternQuality = 'best';
-        ctx.filter = 'best';
-        ctx.drawImage(img, crop.x, crop.y, crop.width, crop.height, 0, 0, canvas.width, canvas.height);
-        canvas.syncJPEGStream({quality: argv.quality}).pipe(f);
-    }
-});
+function resize(result){
+  var crop = result.topCrop;
+  var cmd = gm(input)
+      .crop(crop.width, crop.height, crop.x, crop.y)
+      .resize(options.width, options.height)
+      .unsharp('2x0.5+1+0.008')
+      .colorspace('sRGB')
+      .autoOrient()
+      .strip();
+
+  if(argv.quality) {
+      cmd = cmd.quality(argv.quality);
+  }
+
+  if(output === '-'){
+    cmd.stream(argv.outputFormat).pipe(process.stdout);
+  }
+  else {
+    cmd.write(output, function(err) {
+        if(err) console.error(err);
+    });
+  }
+}
+
+function analyse(){
+  smartcrop.crop(input, options, function(result){
+      if(output !== '-') {
+        console.log(JSON.stringify(result, null, '  '));
+      }
+      if(output && options.width && options.height){
+        resize(result);
+      }
+  });
+}
+
+if(input === '-'){
+    process.stdin.pipe(concat(function(inputBuffer) {
+      input = inputBuffer;
+      analyse();
+    }));
+}
+else {
+  analyse();
+}
