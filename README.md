@@ -22,17 +22,17 @@ On Debian based systems ```apt-get install imagemagick``` on mac os ```brew inst
 ## Usage
 
 ```
-Usage: node ./smartcrop-cli.js [OPTION] FILE [OUTPUT]
+Usage: smartcrop [OPTION] FILE [OUTPUT]
 
 Examples:
-  node ./smartcrop-cli.js --width 100 --height 100 photo.jpg square-thumbnail.jpg    generate a 100x100 thumbnail from photo.jpg
+  smartcrop --width 100 --height 100 photo.jpg square-thumbnail.jpg    generate a 100x100 thumbnail from photo.jpg
 
 
 Options:
   --config         path to a config.json
   --width          width of the crop
   --height         height of the crop
-  --faceDetection  perform faceDetection using opencv  
+  --faceDetection  perform faceDetection using opencv
   --outputFormat   image magick output format string     [default: "jpg"]
   --quality        jpeg quality of the output image      [default: 90]
   -*               forwarded as options to smartcrop.js
