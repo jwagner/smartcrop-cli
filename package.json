@@ -16,7 +16,7 @@
   "dependencies": {
     "concat-stream": "^1.5.1",
     "gm": "^1.22.0",
-    "smartcrop-gm": "~1.0.0",
+    "smartcrop-gm": "~1.0.1",
     "underscore": "~1.6.0",
     "yargs": "~1.2.1"
   },
