@@ -31,10 +31,14 @@ var argv = require('yargs')
     .example('$0 --width 100 --height 100 photo.jpg square-thumbnail.jpg', 'generate a 100x100 thumbnail from photo.jpg')
     .config('config')
     .defaults('quality', 90)
+    .defaults('outputFormat', 'jpg')
+    .boolean('faceDetection')
     .describe({
         config: 'path to a config.json',
         width: 'width of the crop',
         height: 'height of the crop',
+        faceDetection: 'perform faceDetection using opencv',
+        outputFormat: 'image magick output format string',
         quality: 'jpeg quality of the output image',
         '*': 'forwarded as options to smartcrop.js'
     })
@@ -44,25 +48,101 @@ var argv = require('yargs')
     input = argv._[0],
     output = argv._[1];
 
+var concat = require('concat-stream');
 var fs = require('fs'),
-    Canvas = require('canvas'),
-    SmartCrop = require('smartcrop'),
+    gm = require('gm').subClass({ imageMagick: true }),
+    smartcrop = require('smartcrop-gm'),
     _ = require('underscore');
 
-var img = new Canvas.Image(),
-    options = _.extend({canvasFactory: function(w, h){ return new Canvas(w, h); }}, argv.config, _.omit(argv, 'config', 'quality'));
+var cv;
 
-img.src = fs.readFileSync(input);
-SmartCrop.crop(img, options, function(result){
-    console.log(JSON.stringify(result, null, '  '));
-    if(output && options.width && options.height){
-        var canvas = new Canvas(options.width, options.height),
-            ctx = canvas.getContext('2d'),
-            crop = result.topCrop,
-            f = fs.createWriteStream(output);
-        ctx.patternQuality = 'best';
-        ctx.filter = 'best';
-        ctx.drawImage(img, crop.x, crop.y, crop.width, crop.height, 0, 0, canvas.width, canvas.height);
-        canvas.syncJPEGStream({quality: argv.quality}).pipe(f);
-    }
-});
+if (argv.faceDetection) {
+  try {
+    cv = require('opencv');
+  }
+  catch(e) {
+    console.error(e);
+    console.error('skipping faceDetection');
+    argv.faceDetection = false;
+  }
+}
+
+var options = _.extend(
+        {},
+        argv.config,
+        _.omit(argv, 'config', 'quality', 'faceDetection')
+    );
+
+function resize(result){
+  var crop = result.topCrop;
+  var cmd = gm(input)
+      .crop(crop.width, crop.height, crop.x, crop.y)
+      .resize(options.width, options.height)
+      .unsharp('2x0.5+1+0.008')
+      .colorspace('sRGB')
+      .autoOrient()
+      .strip();
+
+  if(argv.quality) {
+      cmd = cmd.quality(argv.quality);
+  }
+
+  if(output === '-'){
+    cmd.stream(argv.outputFormat).pipe(process.stdout);
+  }
+  else {
+    cmd.write(output, function(err) {
+        if(err) console.error(err);
+    });
+  }
+}
+
+function faceDetect(input, options) {
+  return new Promise(function(resolve, reject) {
+    if (!argv.faceDetection) return resolve(false);
+    cv.readImage(input, function(err, image) {
+      if (err) return reject(err);
+      image.detectObject(cv.FACE_CASCADE, {}, function(err, faces){
+          if (err) return reject(err);
+          options.boost = faces.map(function(face){
+            return {
+              x: face.x,
+              y: face.y,
+              width: face.width,
+              height: face.height,
+              weight: 1.0
+            };
+          });
+          console.log('faces', faces);
+          resolve(true);
+      });
+    });
+  });
+}
+
+function analyse(){
+  faceDetect(input, options)
+    .then(function(){
+        return smartcrop.crop(input, options);
+    })
+    .then(function(result) {
+      if(output !== '-') {
+        console.log(JSON.stringify(result, null, '  '));
+      }
+      if(output && options.width && options.height){
+        resize(result);
+      }
+    }, function(err) {
+      console.error(err.stack);
+    });
+}
+
+if(input === '-'){
+    process.stdin.pipe(concat(function(inputBuffer) {
+      input = inputBuffer;
+      analyse();
+    }));
+}
+else {
+  analyse();
+}
