@@ -113,7 +113,6 @@ function faceDetect(input, options) {
               weight: 1.0
             };
           });
-          console.log('faces', faces);
           resolve(true);
       });
     });
