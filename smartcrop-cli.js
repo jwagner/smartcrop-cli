@@ -32,10 +32,12 @@ var argv = require('yargs')
     .config('config')
     .defaults('quality', 90)
     .defaults('outputFormat', 'jpg')
+    .boolean('faceDetection')
     .describe({
         config: 'path to a config.json',
         width: 'width of the crop',
         height: 'height of the crop',
+        faceDetection: 'perform faceDetection using opencv',
         outputFormat: 'image magick output format string',
         quality: 'jpeg quality of the output image',
         '*': 'forwarded as options to smartcrop.js'
@@ -52,10 +54,23 @@ var fs = require('fs'),
     smartcrop = require('smartcrop-gm'),
     _ = require('underscore');
 
+var cv;
+
+if (argv.faceDetection) {
+  try {
+    cv = require('opencv');
+  }
+  catch(e) {
+    console.error(e);
+    console.error('skipping faceDetection');
+    argv.faceDetection = false;
+  }
+}
+
 var options = _.extend(
         {},
         argv.config,
-        _.omit(argv, 'config', 'quality')
+        _.omit(argv, 'config', 'quality', 'faceDetection')
     );
 
 function resize(result){
@@ -82,15 +97,44 @@ function resize(result){
   }
 }
 
+function faceDetect(input, options) {
+  return new Promise(function(resolve, reject) {
+    if (!argv.faceDetection) return resolve(false);
+    cv.readImage(input, function(err, image) {
+      if (err) return reject(err);
+      image.detectObject(cv.FACE_CASCADE, {}, function(err, faces){
+          if (err) return reject(err);
+          options.boost = faces.map(function(face){
+            return {
+              x: face.x,
+              y: face.y,
+              width: face.width,
+              height: face.height,
+              weight: 1.0
+            };
+          });
+          console.log('faces', faces);
+          resolve(true);
+      });
+    });
+  });
+}
+
 function analyse(){
-  smartcrop.crop(input, options, function(result){
+  faceDetect(input, options)
+    .then(function(){
+        return smartcrop.crop(input, options);
+    })
+    .then(function(result) {
       if(output !== '-') {
         console.log(JSON.stringify(result, null, '  '));
       }
       if(output && options.width && options.height){
         resize(result);
       }
-  });
+    }, function(err) {
+      console.error(err.stack);
+    });
 }
 
 if(input === '-'){

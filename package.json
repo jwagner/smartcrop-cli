@@ -19,5 +19,8 @@
     "smartcrop-gm": "~1.0.0",
     "underscore": "~1.6.0",
     "yargs": "~1.2.1"
+  },
+  "optionalDependencies": {
+    "opencv": "^5.0.0"
   }
 }

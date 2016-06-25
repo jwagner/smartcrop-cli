@@ -5,6 +5,10 @@ Image: [https://www.flickr.com/photos/endogamia/5682480447/](https://www.flickr.
 
 You can learn more about smartcrop.js on the [library homepage](https://github.com/jwagner/smartcrop.js)
 
+If the optional dependency [node-opencv](https://github.com/peterbraden/node-opencv)
+is installed smartcrop-cli can additionally detect faces and take them into account
+when finding the optimal crop.
+
 ## Installation
 You can install [smartcrop-cli](https://www.npmjs.com/package/smartcrop-cli) using [npm](https://www.npmjs.com/):
 ```
@@ -25,9 +29,11 @@ Examples:
 
 
 Options:
-  --config   path to a config.json
-  --width    width of the crop
-  --height   height of the crop
-  --quality  jpeg quality of the output image      [default: 90]
-  -*         forwarded as options to smartcrop.js
+  --config         path to a config.json
+  --width          width of the crop
+  --height         height of the crop
+  --faceDetection  perform faceDetection using opencv  
+  --outputFormat   image magick output format string     [default: "jpg"]
+  --quality        jpeg quality of the output image      [default: 90]
+  -*               forwarded as options to smartcrop.js
 ```
