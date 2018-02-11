@@ -1,5 +1,7 @@
 # Command line interface for smartcrop.js
 
+[![Build Status](https://travis-ci.org/jwagner/smartcrop-cli.svg?branch=master)](https://travis-ci.org/jwagner/smartcrop-cli)
+
 ![Example](http://29a.ch/sandbox/2014/smartcrop/example.jpg)
 Image: [https://www.flickr.com/photos/endogamia/5682480447/](https://www.flickr.com/photos/endogamia/5682480447) by N. Feans
 
@@ -10,14 +12,17 @@ is installed smartcrop-cli can additionally detect faces and take them into acco
 when finding the optimal crop.
 
 ## Installation
+
 You can install [smartcrop-cli](https://www.npmjs.com/package/smartcrop-cli) using [npm](https://www.npmjs.com/):
+
 ```
 npm install -g smartcrop-cli
 ```
 
 ## Dependencies
+
 Smartcrop-cli requires [image magick](https://www.imagemagick.org/) to operate.
-On Debian based systems ```apt-get install imagemagick``` on mac os ```brew install imagemagick```.
+On Debian based systems `apt-get install imagemagick` on mac os `brew install imagemagick`.
 
 ## Usage
 

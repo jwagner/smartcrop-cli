@@ -1,15 +1,14 @@
 language: node_js
-node_js:
-    - "node"
-    - "lts/*"
-    - "6"
-    - "5"
-    - "4"
+
 os:
   - linux
 
+services:
+  - docker
+
+compiler: clang
+sudo: false
 before_install:
-  - sudo apt-get update -qq
-  - sudo add-apt-repository -y ppa:kubuntu-ppa/backports
-  - sudo apt-get update
-  - sudo apt-get install --force-yes --yes libcv-dev libcvaux-dev libhighgui-dev libopencv-dev jq
+  - docker build -t jwagner/smartcrop-cli .
+script:
+  - docker run -it jwagner/smartcrop-cli
