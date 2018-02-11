@@ -6,7 +6,6 @@ services:
 
 compiler: clang
 sudo: false
-before_install:
-  - docker build -t jwagner/smartcrop-cli .
 script:
+  - docker build -t jwagner/smartcrop-cli .
   - docker run -it jwagner/smartcrop-cli
