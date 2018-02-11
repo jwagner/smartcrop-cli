@@ -14,13 +14,20 @@
     "url": "https://github.com/jwagner/smartcrop-cli.git"
   },
   "dependencies": {
-    "concat-stream": "^1.5.1",
-    "gm": "^1.22.0",
+    "concat-stream": "^1.6.0",
+    "gm": "^1.23.1",
     "smartcrop-gm": "~1.0.1",
     "underscore": "~1.6.0",
     "yargs": "~1.2.1"
   },
   "optionalDependencies": {
     "opencv": "^5.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.17.0",
+    "prettier-eslint": "^8.8.1"
+  },
+  "scripts": {
+    "test": "eslint smartcrop-cli.js && ./test.sh"
   }
 }
