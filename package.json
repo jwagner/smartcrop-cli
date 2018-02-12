@@ -1,6 +1,6 @@
 {
   "name": "smartcrop-cli",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Command line interface for the smartcrop library to provide content aware image cropping.",
   "homepage": "https://github.com/jwagner/smartcrop-cli",
   "author": "Jonas Wagner <jonas@29a.ch> (http://29a.ch/)",
