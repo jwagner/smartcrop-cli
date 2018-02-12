@@ -1,6 +1,6 @@
 {
   "name": "smartcrop-cli",
-  "version": "1.0.2",
+  "version": "2.0.2",
   "description": "Command line interface for the smartcrop library to provide content aware image cropping.",
   "homepage": "https://github.com/jwagner/smartcrop-cli",
   "author": "Jonas Wagner <jonas@29a.ch> (http://29a.ch/)",
@@ -8,19 +8,27 @@
   "bin": {
     "smartcrop": "smartcrop-cli.js"
   },
+  "files": ["smartcrop-cli.js"],
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/jwagner/smartcrop-cli.git"
   },
   "dependencies": {
-    "concat-stream": "^1.5.1",
-    "gm": "^1.22.0",
+    "concat-stream": "^1.6.0",
+    "gm": "^1.23.1",
     "smartcrop-gm": "~1.0.1",
     "underscore": "~1.6.0",
     "yargs": "~1.2.1"
   },
   "optionalDependencies": {
-    "opencv": "^5.0.0"
+    "opencv": "^6.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.17.0",
+    "prettier-eslint": "^8.8.1"
+  },
+  "scripts": {
+    "test": "eslint smartcrop-cli.js && ./test.sh"
   }
 }

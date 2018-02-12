@@ -1,0 +1,13 @@
+language: node_js
+node_js:
+    - "node"
+    - "lts/*"
+    - "6"
+    - "5"
+    - "4"
+os:
+  - linux
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install --force-yes --yes libcv-dev libopencv-dev
