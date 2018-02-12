@@ -1,11 +1,14 @@
+language: node_js
+node_js:
+    - "node"
+    - "lts/*"
+    - "6"
+    - "5"
+    - "4"
 os:
   - linux
 
-services:
-  - docker
-
-compiler: clang
-sudo: false
-script:
-  - docker build -t jwagner/smartcrop-cli .
-  - docker run -it jwagner/smartcrop-cli
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install --force-yes --yes libcv-dev libopencv-dev
+  - echo $TRAVIS_NODE_VERSION
