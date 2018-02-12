@@ -11,4 +11,3 @@ os:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install --force-yes --yes libcv-dev libopencv-dev
-  - echo $TRAVIS_NODE_VERSION
