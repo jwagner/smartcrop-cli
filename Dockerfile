@@ -5,4 +5,4 @@ RUN apt-get update && apt-get install --force-yes --yes libcv-dev libopencv-dev 
 COPY package.json package-lock.json /app/
 RUN npm install
 COPY . /app
-CMD npm test
+CMD npm install && npm test
