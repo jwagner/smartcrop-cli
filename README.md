@@ -21,8 +21,9 @@ npm install -g smartcrop-cli
 
 ## Dependencies
 
-Smartcrop-cli requires [image magick](https://www.imagemagick.org/) to operate.
+Smartcrop-cli requires [image magick](https://www.imagemagick.org/) version 6 to operate.
 On Debian based systems `apt-get install imagemagick` on mac os `brew install imagemagick`.
+**Imagemagick version 7 will not work.**
 
 ## Usage
 
